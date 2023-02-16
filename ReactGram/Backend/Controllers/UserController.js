@@ -14,7 +14,7 @@ const generateToken = (id) => {
 
 //REGISTER USER AND SIGN IN
 const register = async(req,res) => {
-    
+
     const {name,email,password} = req.body
     //check if user exist
     const user = await User.findOne({email})
@@ -36,7 +36,7 @@ const register = async(req,res) => {
 
     //if user was created successfully, return the token
     if(!newUser){
-        res.status(422).json({errors:["Houve um erro, por favor tente mais tarde."]})
+        res.status(422).json({errors:["Houve um erro, por favor tente novamente mais tarde."]})
         return
     }
     res.status(201).json({
@@ -44,7 +44,40 @@ const register = async(req,res) => {
         token: generateToken(newUser._id),
     })
 }
+//Sign user in
+const login = async(req , res) => {
+    const {email, password} = req.body
+
+    const user = await User.findOne({email})
+
+    //check if user exist
+    if(!user){
+        res.status(404).json({errors: ["Usuário não encontrado."]})
+        return
+    }
+
+    //check if password matches
+    if(!(await bcrypt.compare(password, user.password))){
+        res.status(422).json({errors: ["Senha inválida."]})
+        return
+    }
+
+    //return user with token
+    res.status(201).json({
+        _id:user._id,
+        profileImage:user.profileImagem,
+        token: generateToken(user._id),
+    })
+}
+// get current logged in user
+const getCurrentUser = async(req, res) => {
+    const user = req.user
+
+    res.status(200).json(user)
+}
 
 module.exports = {
     register,
+    login,
+    getCurrentUser,
 }
