@@ -20,7 +20,9 @@ const authGuard = async (req, res, next) => {
         next()
 
     }catch(errors){
-        res.status(401).json ({erros: ["Token inválido."]})
+        res.status(401).json ({errors: ["Token inválido."]})
     }
-    module.exports = authGuard
+
 }
+
+module.exports = authGuard
