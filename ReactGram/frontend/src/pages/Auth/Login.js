@@ -1,4 +1,4 @@
-import style from './Auth.css'
+import './Auth.css'
 
 const Login = () => {
   return (
