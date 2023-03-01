@@ -1,127 +1,143 @@
-import './EditProfile.css'
+import "./EditProfile.css";
 
-import { uploads } from '../../utils/config'
+import { uploads } from "../../utils/config";
 
-//hooks
-import {useState,useEffect} from 'react'
-import{useSelector,useDispatch} from 'react-redux'
+// Hooks
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-//redux
-import { profile,resetMessage, updateProfile } from '../../slices/userSlice'
+// Redux
+import { profile, updateProfile, resetMessage } from "../../slices/userSlice";
 
-//components
-import Message from '../../components/Message'
+// Components
+import Message from "../../components/Message";
 
+const Profile = () => {
+  const dispatch = useDispatch();
 
-const EditProfile = () => {
+  const { user, message, error, loading } = useSelector((state) => state.user);
 
-    const dispatch = useDispatch()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [bio, setBio] = useState("");
+  const [previewImage, setPreviewImage] = useState("");
 
-    const {user,message,error,loading} = useSelector((state) => state.user)
+  // Load user data
+  useEffect(() => {
+    dispatch(profile());
+  }, [dispatch]);
 
-    //states
-    const [name,setName] = useState("")
-    const [email,setEmail] = useState("")
-    const [password,SetPassword] = useState("")
-    const [profileImage,setImageProfile] = useState("")
-    const[bio,setBio] = useState("")
-    const [previewImage,setPreviewImage] = useState("")
-    //load user data
-    useEffect(() => {
-        dispatch(profile())
-    },[dispatch])
+  // fill user form
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+      setBio(user.bio);
+    }
+  }, [user]);
 
-    //Fill form with user data
-    useEffect(() => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if(user){
-            setName(user.name)
-            setEmail(user.email)
-            setBio(user.bio)
-        }
+    // Gather user data from states
+    const userData = {
+      name,
+    };
 
-    },[user])
-
-
-
-
-    const handleSubmit = async (e) =>{
-        e.preventDefault()
-
-        //gether user data from state
-        const userData = {
-            name
-        }
-        if(profileImage){
-            userData.profileImage = profileImage
-        }
-        if(bio){
-            userData.bio = bio
-        }
-        if(password){
-            userData.password = password
-        }
-
-        //build form data
-
-        const formData = new FormData()
-
-        const userFormData = Object.keys(userData).forEach((key) => formData.append(key, userData[key]))
-
-        formData.append("user",userFormData)
-
-        await dispatch(updateProfile(userFormData))
-
-        setTimeout(() => {
-            dispatch(resetMessage())
-        },2000)
+    if (profileImage) {
+      userData.profileImage = profileImage;
     }
 
-    const handleFile = (e) => {
-        //image preview
-        const image = e.target.files[0]
-
-        setPreviewImage(image)
-
-        //update iamge state
-        setImageProfile(image)
+    if (bio) {
+      userData.bio = bio;
     }
+
+    if (password) {
+      userData.password = password;
+    }
+
+    // build form data
+    const formData = new FormData();
+
+    const userFormData = Object.keys(userData).forEach((key) =>
+      formData.append(key, userData[key])
+    );
+
+    formData.append("user", userFormData);
+
+    await dispatch(updateProfile(formData));
+
+    setTimeout(() => {
+      dispatch(resetMessage());
+    }, 2000);
+  };
+
+  const handleFile = (e) => {
+    // image preview
+    const image = e.target.files[0];
+
+    setPreviewImage(image);
+
+    // change image state
+    setProfileImage(image);
+  };
 
   return (
-    <div id='edit-profile'>
-        <h2>Edite seu perfil</h2>
-        <p className='subtitle'>Imagem de perfil</p>
-        {(user.profileImage || previewImage) && (
-            <img className='profile-image'
-                src={
-                    previewImage ? URL.createObjectURL(previewImage) : `${uploads}/users/${user.profileImage}`
-                }
-                alt={user.name}
-            />
-        )}
-        <form onSubmit={handleSubmit}>
-            <input type="text" placeholder='Nome' onChange={(e) => setName(e.target.value)} value={name || ""}/>
-            <input type="email" placeholder='E-mail' disabled value={email || ""}/>
-            <label>
-                <span>Imagem do Perfil:</span>
-                <input type="file" onChange={handleFile}/>
-            </label>
-            <label>
-                <span>Bio:</span>
-                <input type="text" placeholder='Descrição do perfil' onChange={(e) => setBio(e.target.value)} value={bio || ""}/>
-            </label>
-            <label>
-                <span>Altere sua senha</span>
-                <input type="password" placeholder='Digite sua nova senha' onChange={(e) => SetPassword(e.target.value)} value={password || "" }/>
-            </label>
-            {!loading && <input type="submit" value="Atualizar" />}
-            {loading && <input type="submit" value="Aguarde..." disabled />}
-            {error && <Message msg={error} type="error"/>}
-            {message && <Message msg={message} type="sucess"/>}
-        </form>
-        
+    <div id="edit-profile">
+      <h2>Edite seu perfil</h2>
+      <p className="subtitle">
+        Aqui você pode editar seu perfil
+      </p>
+      {(user.profileImage || previewImage) && (
+        <img
+          className="profile-image"
+          src={
+            previewImage
+              ? URL.createObjectURL(previewImage)
+              : `${uploads}/users/${user.profileImage}`
+          }
+          alt={user.name}
+        />
+      )}
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Nome"
+          onChange={(e) => setName(e.target.value)}
+          value={name || ""}
+        />
+        <input type="email" placeholder="E-mail" disabled value={email || ""} />
+        <label>
+          <span>Imagem de Perfil:</span>
+          <input type="file" onChange={handleFile} />
+        </label>
+        <label>
+          <span>Bio:</span>
+          <input
+            type="text"
+            placeholder="Descrição do perfil"
+            onChange={(e) => setBio(e.target.value)}
+            value={bio || ""}
+          />
+        </label>
+        <label>
+          <span>Altere sua senha</span>
+          <input
+            type="password"
+            placeholder="Digite sua nova senha..."
+            onChange={(e) => setPassword(e.target.value)}
+            value={password || ""}
+          />
+        </label>
+        {!loading && <input type="submit" value="Atualizar" />}
+        {loading && <input type="submit" disabled value="Aguarde..." />}
+        {error && <Message msg={error} type="error" />}
+        {message && <Message msg={message} type="success" />}
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default EditProfile
+export default Profile;
