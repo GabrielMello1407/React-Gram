@@ -1,0 +1,22 @@
+#profile{
+    width: 50%;
+    margin: 0 auto;
+    border: 1px solid #363636;
+    padding: 20px;
+    margin-top: 10px;
+    border-radius: 5px ;
+
+}
+.profile-header{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 1em;
+    border-bottom: 1px solid #363636;
+}
+.profile-header img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 2em;
+}

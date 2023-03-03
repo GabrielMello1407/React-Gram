@@ -29,6 +29,8 @@ const Profile = () => {
     dispatch(profile());
   }, [dispatch]);
 
+  console.log(user)
+
   // fill user form
   useEffect(() => {
     if (user) {
@@ -86,9 +88,9 @@ const Profile = () => {
 
   return (
     <div id="edit-profile">
-      <h2>Edite seu perfil</h2>
+      <h2>Edite seus dados</h2>
       <p className="subtitle">
-        Aqui você pode editar seu perfil
+        Adicione uma imagem de perfil, e conte mais um pouco sobre você...
       </p>
       {(user.profileImage || previewImage) && (
         <img
@@ -123,7 +125,7 @@ const Profile = () => {
           />
         </label>
         <label>
-          <span>Altere sua senha</span>
+          <span>Quer alterar sua senha?</span>
           <input
             type="password"
             placeholder="Digite sua nova senha..."
@@ -131,9 +133,9 @@ const Profile = () => {
             value={password || ""}
           />
         </label>
-        {!loading && <input type="submit" value="Atualizar" />}
-        {loading && <input type="submit" disabled value="Aguarde..." />}
-        {error && <Message msg={error} type="error" />}
+        {!loading && <input type="submit" value="Alterar" />}
+        {loading && <input type="submit" value="Aguarde..." disabled />}
+        {error && <Message msg={error} type="error"/>}
         {message && <Message msg={message} type="success" />}
       </form>
     </div>
