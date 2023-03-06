@@ -49,9 +49,6 @@ export const getUserDetails = createAsyncThunk(
     const token = thunkAPI.getState().auth.user.token;
 
     const data = await userService.getUserDetails(user, token);
-
-    console.log(data);
-
     return data;
   }
 );
